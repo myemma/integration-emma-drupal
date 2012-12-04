@@ -52,96 +52,8 @@ $output='<div>'.l(t('Add New group'), 'admin/config/services/emma_list/groups/ad
   }
   return $output;
 }
-
- 
-
- /* 
- Emma list with table form 
- function emma_list_admin_settings() {
-
-$output='<div>'.l(t('Add New group'), 'admin/config/services/emma_list/groups/add').'</div><br>';
-echo $output;
-  $groups=  (emma_get_api_object()->list_groups());
-  $rows = array();
-  $i=1;
-  foreach($groups as $group)
-  {
-    $actions = array(
-      l(t('Rename'), 'admin/config/services/emma_list/groups/' . $group->member_group_id  . '/rename'),
-      l(t('Delete'), 'admin/config/services/emma_list/groups/' . $group->member_group_id  . '/delete')
-    );  
-    echo print_r($group,true);
-    $rows[$group->member_group_id] = array(
-      $i,  
-      l($group->group_name, 'admin/config/services/emma_list/groups/'.$group->member_group_id.'/view'),
-      $group->active_count+$group->optout_count+$group->error_count,
-      $group->active_count,
-      $group->optout_count,
-      implode(' | ', $actions),
-    );  
-    $i++; 
- }     
-$form['group_table'] = array
-(
-  '#type' => 'tableselect',
-  '#header' => array(t('No:'),t('Name'), t('Total Users'), t('Active'), t('Opt out'), t('Actions')),
-  '#options' => $rows,
-  '#multiple' => TRUE,
-); 
-
-$form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Delete Selected'),
-    '#submit' => array('emma_group_bulk_delete'),
-    '#attributes' => array('onclick' => 'if(!confirm("Are you sure delete selected items?")){return false;}'),
-
-);
-return $form;
-
-}*/
-
-/*function emma_group_bulk_delete($form, &$form_values){
-      //emma_get_api_object()->update_group($form_values['values']['emma_group_id'], $form_values['values']['emma_group_name']);
-      //echo "<pre>".print_r(($form_values['values']['group_table']),true)."</pre>";
-      foreach($form_values['values']['group_table'] as $val)
-      {
-            if($val)
-                $group_ids[]=$val;
-      }
-      drupal_set_message(t(print_r(($form_values['values']['group_table']),true)));
-    }*/
-    
     
 function emma_add_group_form() {
- /*
-table with form
- $mailings=emma_get_api_object()->get_mailing_list('true','m,t','p,a,s,x,c,f','');
-  $rows = array();
-  $i=1;
-  //echo "<pre>".print_r(($mailings))."</pre>";
-  foreach($mailings as $mailing)
-  {
-    $actions = array(
-      l(t('Rename'), 'admin/config/services/emma_list/groups/' . 1 . '/rename'),
-      l(t('Delete'), 'admin/config/services/emma_list/groups/' . 1  . '/delete')
-    );  
-    $rows[] = array(
-      $i,  
-      $mailing->name,
-      $mailing->mailing_status,
-      $mailing->mailing_type,
-      implode(' | ', $actions),
-    );  
-    $i++; 
- }     
- $header=array(t('No:'),t('Name'), t('Status'), t('Type'),  t('Actions'));
-$form['table'] = array
-(
-  '#type' => 'tableselect',
-  '#header' => $header,
-  '#options' => $rows,
-  '#multiple' => TRUE,
-); */
   $form['emma_group_name'] = array(
       '#type' => 'textfield',
       '#title' => t('Group Name'),
@@ -305,49 +217,9 @@ function emma_view_group_details($form, &$form_state,$group = NULL) {
           '#prefix' => $output,
         );        
     }
- 
-
-
-//$form['#action']=url('admin/config/services/emma_list/groups/member/copy_users');
- /* $table = array(
-    'header' => array(t('No:'),t('Name'), t('Total Users'), t('Active'), t('Opt out'), t('Actions')),
-    'rows' => $rows
-  );
- // $output.= theme('table', $table);*/
   return $form;
 }
 
-/* function emma_copy_users_form($form, &$form_state)
-{
-
-    lists_session("type", $form_state['input']['table_users']);
-    $groups=emma_get_api_object()->list_groups();   
-    foreach($groups as $group)
-    {
-        $groups_list[$group->member_group_id]=$group->group_name;
-    }
-    $form['group_list'] = array(
-      '#type' => 'select',
-      '#title' => t('Select Groups'),
-      '#default_value' => '',
-      '#multiple' => TRUE ,
-      '#size' => count($groups_list)>10 ? 10:count($groups_list),
-      '#options' => $groups_list,
-    );    
-  $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Submit'),
-    '#submit' => array('emma_copy_users_form_submit'),
-  );
-  return $form;
-}
-
-function emma_copy_users_form_submit()
-{
-    drupal_set_message(print_r(lists_session("type"),true));
-}
-
-*/
 function emma_add_user_form($form, &$form_state, $group = NULL) {
     //echo "<pre>".print_r((emma_get_api_object()->get_member_detail(90347832)),true)."</pre>";
     $form_state['group'] = $group;
@@ -787,7 +659,6 @@ function emma_edit_details_user_form($form, &$form_state, $group = NULL,$member=
 
     function emma_user_update($form, &$form_values){
     //$fields = array('first_name'=>'Foo', 'last_name'=>'Bar');
-    //$groups = '270648';
     //$response = $E->import_single_member('test1@gmail.com', $fields, $groups, $signup_form);  
     $emma_api_object=emma_get_api_object();
     $fields=$emma_api_object->get_field_list(1);
@@ -860,61 +731,6 @@ function emma_edit_details_user_form($form, &$form_state, $group = NULL,$member=
       //drupal_set_message(print_r($form_values['emma_email_id'],true));
     }
     
-/*function emma_import_users_form($form, &$form_state,$group = NULL){
-    $form_state['group']=$group;
-    $emma_api_object=emma_get_api_object();
-    $groups=$emma_api_object->list_groups('g,t');   
-    foreach($groups as $group)
-    {
-        $groups_list[$group->member_group_id]=$group->group_name;
-    }
-    $form['#attributes']['enctype'] = 'multipart/form-data'; // If this is not here, upload will fail on submit
-    $form['fid'] = array( '#title' => t('Upload a File'),
-    '#type' => 'file',
-    '#description' => t('Files must be in Excel (xls or xlsx) or csv format.'),
-    );
-    //echo $group;
-    $form['group_list'] = array(
-      '#type' => 'select',
-      '#title' => t('Add to Groups'),
-      '#default_value' => array($form_state['group']),
-      '#multiple' => TRUE ,
-      '#size' => count($groups_list)>10 ? 10:count($groups_list),
-      '#options' => $groups_list,
-    );        
-    $form['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save'),
-    '#submit' => array('emma_import_users_form_submit'),
-    );
-    return $form;
-}    
-*/
-
-/*function emma_import_users_form_submit($form, &$form_values){
-
-    drupal_set_message(print_r($form_values['values'],true));
-    $filepath = 'public://temp/';
-    file_prepare_directory($filepath, FILE_CREATE_DIRECTORY);
-    $file = file_save_upload('fid', array('file_validate_extensions' => array('xls xlsx csv')), $filepath,FILE_EXISTS_RENAME);
-    // Very important to do this or file will be deleted on cron
-   // $file->status = FILE_STATUS_PERMANENT;
-    $file = file_save($file);
-    $members=array('email' =>'sdasdasdas@ding.com');
-    if($file){
-        
-        $filename=$GLOBALS['base_url']."/".variable_get('file_public_path', conf_path() . '/files').'/temp/'.$file->filename;
-        $emma_api_object=emma_get_api_object();
-        $response=$emma_api_object->import_member_list($members, $filename);      
-        drupal_set_message(print_r($response,true));
- 
-    }elseif(!$file){
-    drupal_set_message('There was an error uploading the file', $type = 'error');
-    } 
- 
-}*/
-
-
 function lists_session($key, $value = NULL) {
   static $storage;
   if ($value) {

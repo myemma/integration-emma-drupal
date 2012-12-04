@@ -90,16 +90,16 @@ class EMMAAPI {
     // object is created.
     /*switch($account_id){
       case '1704248':
-        $this->emma_username = '9d93ee278f032a01ac2c';
-        $this->emma_password = '3650d197aba5ca4e6756';
+        $this->emma_username = '';
+        $this->emma_password = '';
         break;
       case '7654321':
-        $this->emma_username = 'asdfasdfasdfasdfasdf';
-        $this->emma_password = 'fdsafdsafdsafdsafdsa';
+        $this->emma_username = '';
+        $this->emma_password = '';
         break;
       default:
-        $this->emma_username = 'asdfasdfasdfasdfasdf';
-        $this->emma_password = 'fdsafdsafdsafdsafdsa';
+        $this->emma_username = '';
+        $this->emma_password = '';
         break;
     }*/
 	}
