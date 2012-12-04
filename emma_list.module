@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * @file
+ * Emma module.
+ */
+ module_load_include('inc','emma_lists.entity');
+/**
+ * Implements hook_menu().
+ */
+function emma_menu() {
+  $items = array();
+
+
+  $items['admin/config/services/emma_list/groups/%/rename2'] = array(
+    'title' => 'Rename a Group',
+    'description' => 'Rename a Group.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_list_list_form', 5),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  /*$items['admin/config/services/emma/groups/%emma_list/rename'] = array(
+    'title' => 'Rename a Group',
+    'description' => 'Rename a Group.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_list_list_form', 5),
+    'load arguments' => array(5),
+    'access arguments' => array('administer emma_list'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_CALLBACK,
+  );  */
+
+
+  return $items;
+}
+
+function emma_get_api_object() {
+  $q = new EMMAAPI(variable_get('emma_api_key'), variable_get('emma_username'),variable_get('emma_password'));
+  return $q;
+}

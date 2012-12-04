@@ -1,0 +1,304 @@
+<?php
+
+/**
+ * @file
+ * Emma module.
+ */
+ module_load_include('inc','emma_lists.entity');
+/**
+ * Implements hook_menu().
+ */
+function emma_menu() {
+  $items = array();
+  
+  $items['admin/config/services/emma'] = array(
+    'title' => 'Emma',
+    'description' => 'Manage Emma Settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_admin_settings'),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  
+  $items['admin/config/services/emma_list'] = array(
+    'title' => 'Emma List',
+    'description' => 'Manage Emma List',
+    'page callback' => 'emma_list_table',
+    'page arguments' => array('emma_list_table'),
+    'access arguments' => array('administer emma_list'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );  
+
+
+  $items['admin/config/services/emma_list/groups/%/rename'] = array(
+    'title' => 'Rename Group',
+    'description' => 'Rename  Group.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_list_list_form', 5),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['admin/config/services/emma_list/groups/%/delete'] = array(
+    'title' => 'Delete  Group',
+    'description' => 'Delete Group.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_delete_list_form', 5),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );  
+
+  $items['admin/config/services/emma_list/groups/%/view'] = array(
+    'title' => 'Group Details',
+    'description' => 'Group Details',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_view_group_details',5),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );  
+  $items['admin/config/services/emma_list/groups/add'] = array(
+    'title' => 'Add a Group',
+    'description' => 'Add a Group',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_add_group_form'),
+    'access arguments' => array('administer emma_list'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );  
+  
+  $items['admin/config/services/emma_list/groups/%/add_user'] = array(
+    'title' => 'Add User',
+    'description' => 'Add User',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_add_user_form', 5),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );  
+  
+  $items['admin/config/services/emma_list/groups/member/%/edit_status'] = array(
+    'title' => 'Edit Status',
+    'description' => 'Edit Status',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_edit_user_form', 6),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );    
+  
+  $items['admin/config/services/emma_list/groups/member/copy_users'] = array(
+    'title' => 'Copy Users',
+    'description' => 'Copy users',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_copy_users_form', 6),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );    
+  
+  $items['admin/config/services/emma_list/groups/%/member/%/delete'] = array(
+    'title' => 'Edit Status',
+    'description' => 'Edit Status',
+    'load arguments' => array(7),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_delete_user_form', 5,7),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );    
+
+  $items['admin/config/services/emma_list/groups/%/member/%/edit_details'] = array(
+    'title' => 'Edit User Details',
+    'description' => 'Edit User Details',
+    'load arguments' => array(7),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_edit_details_user_form', 5,7),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );   
+  
+  $items['admin/config/services/emma_list/groups/%/import_users'] = array(
+    'title' => 'Import Users',
+    'description' => 'Import Users',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_import_users_form', 5),
+    'access arguments' => array('administer emma'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );    
+  
+  $items['admin/config/services/emma_stats'] = array(
+    'title' => 'Emma Mailing Reports',
+    'description' => 'Detailed Emma Response Details',
+    'page callback' => 'emma_stats_list',
+    'page arguments' => array('emma_stats_list'),
+    'access arguments' => array('administer emma_stats'),
+    'file' => 'includes/emma_stats.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );    
+  
+  $items['admin/config/services/emma_stats/%/details'] = array(
+    'title' => 'Emma Mailing Reports',
+    'description' => 'Emma Mailing Reports',
+    'page callback' => 'emma_mailing_details',
+    'page arguments' => array(4),
+    'access arguments' => array('administer emma_stats'),
+    'file' => 'includes/emma_stats.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );      
+  
+  $items['admin/config/services/emma_stats/%/details/%'] = array(
+    'title' => 'Emma Mailing Reports',
+    'description' => 'Emma Mailing Reports',
+    'page callback' => 'emma_mailing_specific_details',
+    'page arguments' => array(4,6),
+    'access arguments' => array('administer emma_stats'),
+    'file' => 'includes/emma_stats.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );   
+  
+  $items['admin/config/services/emma/global'] = array(
+    'title' => 'Global Settings',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['emma/webhook'] = array(
+    'title' => 'Emma webhooks endpoint',
+    'page callback' => 'emma_process_webhook',
+    'access callback' => 'emma_process_webhook_access',
+    'access arguments' => array(2),
+    'type' => MENU_CALLBACK,
+  );
+  
+  $items['emma/subscribe'] = array(
+    'title' => 'Newsletter Subscription',
+    'description' => 'Present all available free form newsletter subscriptions.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('emma_subscribe_page'),    
+    'access callback' => 'emma_subscribe_page_access',
+  );  
+$items['user/%user/subscribe'] = array(
+  'type' => MENU_LOCAL_TASK,
+  'title' => 'Newsletter Subscription',
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('emma_subscribe_page'),  
+  'access callback' => 'user_is_logged_in',
+  'weight' => 10 // You can control the position of the tab with this property
+);
+  return $items;
+}
+
+function mymodule_newtab_form($form, &$form_state, $account) {
+  // ...
+}
+
+
+function emma_subscribe_page($form, &$form_state)
+ {
+        global $user;
+        $emma_api_object=emma_get_api_object();
+        $member_group_ids=array();
+        $member_details=$emma_api_object->get_member_detail_by_email($user->mail);
+        $form_state['member_id']=0;
+        if(isset($member_details->member_id))
+        {
+            $form_state['member_id']=$member_details->member_id;
+            $groups=  ($emma_api_object->list_member_groups($member_details->member_id));
+            foreach($groups as $group)
+            {
+                $member_group_ids[$group->member_group_id]=$group->member_group_id;
+            }  
+        }      
+        $groups=$emma_api_object->list_groups(); 
+	if(isset($groups))  {
+            foreach($groups as $group)
+            {
+                $groups_list[$group->member_group_id]=$group->group_name;
+            }
+        }
+        
+        if(isset($groups_list)){
+            $form['group_list'] = array(
+                '#type' => 'select',
+                '#title' => t('Select the groups you want to subscribe [Uncheck for Unsubscribing]'),
+                '#default_value' => $member_group_ids,
+                '#multiple' => TRUE ,
+                '#size' => count($groups_list)>10 ? 10:count($groups_list),
+                '#options' => $groups_list,
+           );            
+           $form['submit'] = array(
+               '#type' => 'submit',
+               '#value' => t('Subscribe'),
+               '#submit' => array('emma_user_subscribe'),
+     
+          );
+       }
+       else{
+           $form['group_list'] = array(
+                '#type' => 'select',
+                '#title' => t('No groups available')
+            );    
+       }
+       return $form;  
+}
+
+function emma_user_subscribe($form, &$form_state)
+{
+   // $form_state['maju']="test";
+      global $user;
+       $group_data=array();
+       $field_data=array();
+       $field_data=array(
+       'first_name'=> ''
+       );
+       foreach($form_state['values']['group_list'] as $val)
+       {
+            if($val)
+                $group_data[]=intval($val);
+       }
+       $emma_api_object=emma_get_api_object();
+      if($form_state['member_id'])
+      {
+           $response=$emma_api_object->remove_member_from_all_groups($form_state['member_id']);
+           $response=$emma_api_object->add_member_to_groups($form_state['member_id'],$group_data);  
+           drupal_set_message(t('Data Updated successfully !!!'));   
+      }
+      else
+      {
+        $members = array(   
+                            array('email'=>$user->mail),
+                        );
+ 
+          $response=$emma_api_object->import_member_list($members, 'Drupal_import'.time(), 1, $group_data);   
+          if(isset($response->import_id))
+          {
+            drupal_set_message(t('Data Updated successfully !!!'));  
+          } 
+      }
+}
+
+/**
+ * Access callback for emma_user_subscribe_page().
+ *
+ * @param  $user
+ * @return bool
+ */
+function emma_subscribe_page_access() {
+    global $user;
+    if ($user->uid) {
+        return 1;
+    }
+    if (!$user->uid) {
+       return 0;
+    } 
+}
+
+function emma_get_api_object() {
+  $q = new EMMAAPI(variable_get('emma_api_key'), variable_get('emma_username'),variable_get('emma_password'));
+  return $q;
+}

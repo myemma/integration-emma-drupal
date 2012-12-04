@@ -1,0 +1,27 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the emma module.
+ *
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function emma_schema() {
+  $schema['cache_emma_user'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_emma_user']['description'] = 'Cache table for the Emma module to store a list subscribers member info.';
+
+  return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function emma_uninstall() {
+  variable_del('emma_api_key');
+  variable_del('emma_batch_limit');
+  variable_del('emma_use_secure');  
+}
+

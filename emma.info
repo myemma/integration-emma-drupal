@@ -1,0 +1,19 @@
+name = Emma
+description = Emma email service integration.
+package = Emma
+core = 7.x
+
+
+files[] = emma.drush.inc
+files[] = emma.admin.inc
+files[] = emma.install
+files[] = emma.module
+files[] = EMMAAPI.class.php
+
+configure = admin/config/services/emma
+; Information added by drupal.org packaging script on 2011-12-09
+version = "1.0"
+core = "7.x"
+project = "emma"
+datestamp = "1323452443"
+
