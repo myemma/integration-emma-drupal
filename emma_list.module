@@ -22,7 +22,7 @@ function emma_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
-  /*$items['admin/config/services/emma/groups/%emma_list/rename'] = array(
+  $items['admin/config/services/emma/groups/%emma_list/rename'] = array(
     'title' => 'Rename a Group',
     'description' => 'Rename a Group.',
     'page callback' => 'drupal_get_form',
@@ -31,7 +31,7 @@ function emma_menu() {
     'access arguments' => array('administer emma_list'),
     'file' => 'includes/emma_list.admin.inc',
     'type' => MENU_CALLBACK,
-  );  */
+  );  
 
 
   return $items;

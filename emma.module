@@ -4,7 +4,7 @@
  * @file
  * Emma module.
  */
- module_load_include('inc','emma_lists.entity');
+module_load_include('inc','emma_lists.entity');
 /**
  * Implements hook_menu().
  */
@@ -21,7 +21,7 @@ function emma_menu() {
     'type' => MENU_NORMAL_ITEM,
   );
   
-  $items['admin/config/services/emma_list'] = array(
+ $items['admin/config/services/emma_list'] = array(
     'title' => 'Emma List',
     'description' => 'Manage Emma List',
     'page callback' => 'emma_list_table',
@@ -30,7 +30,16 @@ function emma_menu() {
     'file' => 'includes/emma_list.admin.inc',
     'type' => MENU_NORMAL_ITEM,
   );  
-
+ 
+  $items['admin/config/services/emma_list/set_default_group/%'] = array(
+    'title' => 'Default Group',
+    'description' => 'Set Default Emma Group',
+    'page callback' => 'emma_set_default_group',
+    'page arguments' => array(5),
+    'access arguments' => array('administer emma_list'),
+    'file' => 'includes/emma_list.admin.inc',
+    'type' => MENU_NORMAL_ITEM,
+  );
 
   $items['admin/config/services/emma_list/groups/%/rename'] = array(
     'title' => 'Rename Group',
@@ -179,7 +188,7 @@ function emma_menu() {
     'title' => 'Newsletter Subscription',
     'description' => 'Present all available free form newsletter subscriptions.',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('emma_subscribe_page'),    
+    'page arguments' => array('emma_visitor_subscribe_page'),    
     'access callback' => 'emma_subscribe_page_access',
   );  
 $items['user/%user/subscribe'] = array(
@@ -198,6 +207,72 @@ function mymodule_newtab_form($form, &$form_state, $account) {
 }
 
 
+function emma_visitor_subscribe_page($form, &$form_status)
+{
+    global $user;
+    $emma_api_object= emma_get_api_object();
+    $member_group_ids=array();
+    if(isset($user->mail))
+    {
+        $member_details= $emma_api_object->get_member_detail_by_email($user->mail);
+        $form_state['member_id']=0;
+        if(isset($member_details->member_id)){
+            $form_state['member_id']=$member_details->member_id;
+        }
+    }        
+    else
+    {
+        $form['visitor_name'] = array(
+           '#type' => 'textfield',
+           '#title' => t('Name'),
+           '#required' => FALSE,     
+         );
+
+        $form['visitor_email'] = array(
+           '#type' => 'textfield',
+           '#title' => t('Email'),
+           '#required' => TRUE                                       
+        );
+    }
+    $form['submit'] = array(
+           '#type' => 'submit',
+           '#value' => t('Subscribe'),
+           '#submit' => array('emma_visitor_subscribe'),                                                           
+        );
+    return $form;
+}
+ 
+function emma_visitor_subscribe($form, &$form_state)
+{
+    $emma_api_object=emma_get_api_object();
+    $group_id = variable_get('default_group');
+    if(isset($form_state['member_id']))
+    {
+        $response=$emma_api_object->remove_member_from_all_groups($form_state['member_id']);
+        $response=$emma_api_object->add_member_to_groups($form_state['member_id'],$group_id);  
+        drupal_set_message(t('Updated successfully !!!'));   
+    }
+    else
+    {
+        $fields['first_name'] = $form_state['values']['visitor_name'];   
+        $response = $emma_api_object->import_single_member($form_state['values']['visitor_email'],$fields);
+         
+        if( isset($response->member_id) )
+        {
+            $group_data[] = $group_id;
+            $response = $emma_api_object->add_member_to_groups($response->member_id,$group_data);  
+            if ( isset($response))
+            {
+                drupal_set_message(t('Added successfully !!!')); 
+            } 
+            else
+            {
+                print_r($response);
+            }
+        } 
+    }
+}
+
 function emma_subscribe_page($form, &$form_state)
  {
         global $user;
@@ -214,36 +289,39 @@ function emma_subscribe_page($form, &$form_state)
                 $member_group_ids[$group->member_group_id]=$group->member_group_id;
             }  
         }      
-        $groups=$emma_api_object->list_groups(); 
-	if(isset($groups))  {
+        $groups=$emma_api_object->list_groups();   
+        if (isset($groups)){ 
             foreach($groups as $group)
             {
                 $groups_list[$group->member_group_id]=$group->group_name;
             }
         }
-        
+        $form[] = array();
         if(isset($groups_list)){
             $form['group_list'] = array(
-                '#type' => 'select',
-                '#title' => t('Select the groups you want to subscribe [Uncheck for Unsubscribing]'),
-                '#default_value' => $member_group_ids,
-                '#multiple' => TRUE ,
-                '#size' => count($groups_list)>10 ? 10:count($groups_list),
-                '#options' => $groups_list,
-           );            
+              '#type' => 'select',
+              '#title' => t('Select the groups you want to subscribe [Uncheck for Unsubscribing]'),
+              '#default_value' => $member_group_ids,
+              '#multiple' => TRUE ,
+              '#size' => count($groups_list)>10 ? 10:count($groups_list),
+              '#options' => $groups_list,
+          );            
+         
            $form['submit'] = array(
-               '#type' => 'submit',
-               '#value' => t('Subscribe'),
-               '#submit' => array('emma_user_subscribe'),
+              '#type' => 'submit',
+              '#value' => t('Subscribe'),
+              '#submit' => array('emma_user_subscribe'),
      
-          );
-       }
-       else{
-           $form['group_list'] = array(
+           );
+        }
+        else
+        {
+            $form['group_list'] = array(
                 '#type' => 'select',
-                '#title' => t('No groups available')
-            );    
-       }
+                '#title' => 'No groups available',
+                '#default_value' => 'No groups'
+            );
+        } 
        return $form;  
 }
 
@@ -290,12 +368,13 @@ function emma_user_subscribe($form, &$form_state)
  */
 function emma_subscribe_page_access() {
     global $user;
-    if ($user->uid) {
+ /*   if ($user->uid) {
         return 1;
     }
     if (!$user->uid) {
        return 0;
-    } 
+    } */
+    return 1;
 }
 
 function emma_get_api_object() {
