@@ -12,5 +12,5 @@
   2. Direct your browser to http://example.com/admin/config/services/emma 
   to configure the module. (Replace example.com with your domain name)
 
-  3. You will need to put in your Emma API key Emma username and Emma password for your Emmaaccount.
+  3. You will need to put in your Emma API key Emma username and Emma password for your Emma account.
   If you do not have Emma account API details ,You can generate it from https://app.e2ma.net/app2/billing/settings/
