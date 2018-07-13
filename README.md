@@ -1,3 +1,7 @@
+# Please note:
+
+You may find the more recently updated [EmmaPHP library](https://github.com/myemma/emmaphp) to be helpful. 
+
 ## Features
   * API integration
   * Managing Mail List
